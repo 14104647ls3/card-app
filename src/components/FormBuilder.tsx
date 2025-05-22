@@ -66,9 +66,9 @@ export default function FormBuilder({ initialForm }: { initialForm: Form }) {
                     <QuestionEditor key={q.id} question={q} onChange={(updated) => updateQuestion(q.id, updated)} />
                 </>
             ))}
-            <button onClick={addQuestion} className="bg-green-200 px-3 py-1 rounded">Add Question</button>
+            <button onClick={addQuestion} className="bg-green-600 px-4 py-2 rounded">Add Question</button>
             <button onClick={saveForm} className="bg-blue-600 text-white px-4 py-2 rounded shadow">Save Form</button>
-            <button onClick={() => router.push('/')} className="bg-gray-200 px-3 py-1 rounded">Back to Home</button>
+            <button onClick={() => router.push('/')} className="bg-gray-600 px-4 py-2 rounded">Back to Home</button>
         </div>
     );
 }

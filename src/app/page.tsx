@@ -29,6 +29,20 @@ export default function HomePage() {
     router.push(`/form/${newForm._id}/edit`);
   };
 
+  const deleteForm = async (id: string) => {
+    const confirmed = confirm('Are you sure you want to delete this form?');
+    if (!confirmed) return;
+
+    const res = await fetch(`/api/forms/${id}`, {
+      method: 'DELETE'
+    });
+    if (res.ok) {
+      setForms(forms.filter(form => form._id !== id));
+    } else {
+      alert('Failed to delete form');
+    }
+  };
+
   return (
     <main className="max-w-3xl mx-auto p-6 space-y-6">
       <div className="flex justify-between items-center">
@@ -48,6 +62,9 @@ export default function HomePage() {
             <div className="mt-2 flex gap-4">
               <Link href={`/form/${form._id}`} className="text-blue-600">Fill Form</Link>
               <Link href={`/form/${form._id}/edit`} className="text-gray-600">Edit</Link>
+              <button
+                onClick={() => deleteForm(form._id)}
+                className="text-red-600">Delete</button>
             </div>
           </li>
         ))}

@@ -26,9 +26,8 @@ ToDo:
 Prompt to generate questions -> LangChain
 QRCode for sharing -> lib qrcode
 Empty Form to PDF -> PDF.js
-Filled form to PDF -> PDF.js
 Draggable -> react-dnd
-Pagination -> Pagination form by section
+Section -> Add Section
 Add link -> URL?
 Make a copy
 Form submit refresh confirm

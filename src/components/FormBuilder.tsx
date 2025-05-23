@@ -1,11 +1,12 @@
 // components/FormBuilder.tsx
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Form, Question } from '../models/form';
 import QuestionEditor from './QuestionEditor';
 import { v4 as uuidv4 } from 'uuid';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Sortable from 'sortablejs';
 
 export default function FormBuilder({ initialForm }: { initialForm: Form }) {
     const [form, setForm] = useState<Form>(initialForm);
@@ -53,6 +54,17 @@ export default function FormBuilder({ initialForm }: { initialForm: Form }) {
         }
     };
 
+    useEffect(() => {
+        // Access document object here
+        window.addEventListener('load', () => {
+            const listWithHandle = document.getElementById('sortableHandle');
+            Sortable.create(listWithHandle, {
+                handle: '.question-card-drag',
+                animation: 150
+            });
+        });
+    }, []);
+
     return (
         <div className="min-h-screen bg-gradient-to-b from-lightest-blue to-white py-10 px-4">
             <div className="max-w-3xl mx-auto">
@@ -73,11 +85,12 @@ export default function FormBuilder({ initialForm }: { initialForm: Form }) {
                         />
                     </div>
                     
-                    <div className="form-body">
+                    <div className=" form-body">
                         {form.questions.length > 0 ? (
-                            <div className="space-y-6 mb-6">
+                            <div className="sortableHandle space-y-6 mb-6">
                                 {form.questions.map((q, index) => (
-                                    <div key={q.id} className="question-card rounded-lg shadow-sm">
+                                    <div key={q.id} className=" rounded-lg shadow-sm">
+                                        <span className="question-card-drag">Drag</span>
                                         <div className="flex justify-between items-center bg-pale-blue px-4 py-2 rounded-t-lg">
                                             <div className="text-navy font-medium">Question {index + 1}</div>
                                             <button 
@@ -90,8 +103,8 @@ export default function FormBuilder({ initialForm }: { initialForm: Form }) {
                                                 </svg>
                                             </button>
                                         </div>
-                                        <div className="p-5">
-                                            <QuestionEditor key={q.id} question={q} onChange={(updated) => updateQuestion(q.id, updated)} />
+                                        <div className=" p-5">
+                                                <QuestionEditor key={q.id} question={q} onChange={(updated) => updateQuestion(q.id, updated)} />
                                         </div>
                                     </div>
                                 ))}

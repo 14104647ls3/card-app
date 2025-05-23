@@ -1,0 +1,49 @@
+Task 
+
+Make a production-ready web application that is capable of:
+
+user can create forms with multiple text-fields , dropdown list options, or file upload input
+user can view list of forms 
+user can fill in the form by clicking survey button in the form row
+forms, questions, and form responses are stored in a database
+(nice to have) Ensure a modern and intuitive. This includes clear visual feedback, accessible layouts, and smooth interactions.
+In your response email (or in the README), please describe at least one UX idea or feature that could make the form builder experience better or more unique. This idea can be:
+A thoughtful UX improvement you would consider adding, OR
+An optional feature you’ve already implemented to enhance usability.
+Notes
+
+Authentication and Authorization are not required.
+Use any tech stack you are comfortable with
+Maintain a clear Git commit history to show your development process.
+If you reference any previous projects, please clearly note what parts were reused.
+
+
+--------
+Done:
+
+
+ToDo:
+Prompt to generate questions -> LangChain
+QRCode for sharing -> lib qrcode
+Empty Form to PDF -> PDF.js
+Filled form to PDF -> PDF.js
+Draggable -> react-dnd
+Pagination -> Pagination form by section
+Add link -> URL?
+Make a copy
+Form submit refresh confirm
+most recent response
+debounce
+
+This is a project like google form.
+There are 3 major route.
+'/', /form/[id] and /form/[id]/edit.
+
+You are an experienced senior UXUI designer. You will enhance the UXUI of the current project.
+Requirement:
+    - Don't perform package installation
+    - Use tailwind css and radix-ui
+    - Enhance the UXUI of the 3 routes and the related component to simple modern design
+    - The UXUI must be responsive, mobile friendly
+    - You can change the layout of the HTML element or change the HTML, but functionality must be the same
+    - Use this color palette: #03045e, #023e8a, #0077b6, #0096c7, #00b4d8, #48cae4, #90e0ef, #ade8f4, #caf0f8

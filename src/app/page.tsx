@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Form } from '../models/form';
+import { CardPopover } from '@/components/ui/CardPopover';
 
 export default function HomePage() {
   const [forms, setForms] = useState<Form[]>([]);
@@ -80,8 +81,11 @@ export default function HomePage() {
                 key={form._id} 
                 className="bg-stone-200 rounded-lg shadow-md hover:shadow-2xl transition border-none overflow-hidden flex flex-col"
               >
-                <div className="p-5 flex-grow">
-                  <h2 className="text-xl font-semibold text-navy mb-2 line-clamp-1">{form.title}</h2>
+                <div className="p-4 flex-grow">
+                  <div className="flex justify-between">
+                    <h2 className="text-xl font-semibold text-navy mb-2 line-clamp-1">{form.title}</h2>
+                    <CardPopover formId={form._id} />
+                  </div>
                   {form.description && (
                     <p className="text-gray-600 text-sm mb-4 line-clamp-2">{form.description}</p>
                   )}
@@ -96,7 +100,7 @@ export default function HomePage() {
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor" style={{ transform: 'rotate(90deg)' }}>
                         <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
                       </svg>
-                      Fill
+                      Survey
                     </Link>
                     <Link 
                       href={`/form/${form._id}/edit`} 

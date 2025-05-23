@@ -19,6 +19,7 @@
     "radix-ui": "^1.4.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "sortablejs": "^1.15.6",
     "react-simple-toasts": "^6.1.0",
     "swr": "^2.3.3",
     "uuid": "^11.1.0"
@@ -29,6 +30,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/sortablejs": "^1.15.8",
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
     "tailwindcss": "^4.1.7",

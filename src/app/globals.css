@@ -1,8 +1,21 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --navy: #03045e;
+  --deep-blue: #023e8a;
+  --ocean-blue: #0077b6;
+  --blue: #0096c7;
+  --sky-blue: #00b4d8;
+  --light-blue: #48cae4;
+  --pale-blue: #90e0ef;
+  --soft-blue: #ade8f4;
+  --lightest-blue: #caf0f8;
+  --grey-blue: #333446;
+  --mist-blue: #7F8CAA;
+  --green-blue: #B8CFCE;
+  
+  --background: #ededed;
+  --foreground: #0a0a0a;
 }
 
 @theme inline {
@@ -12,7 +25,7 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
@@ -22,5 +35,104 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+}
+
+.form-container {
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  background-color: white;
+  overflow: hidden;
+}
+
+.form-header {
+  background-color: var(--ocean-blue);
+  color: white;
+  padding: 1.5rem;
+  border-bottom: 4px solid var(--deep-blue);
+}
+
+.form-body {
+  padding: 1.5rem;
+}
+
+.btn-primary {
+  background-color: var(--ocean-blue);
+  color: white;
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: var(--deep-blue);
+}
+
+.btn-secondary {
+  background-color: var(--light-blue);
+  color: var(--navy);
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  background-color: var(--pale-blue);
+}
+
+.btn-danger {
+  background-color: #f87171;
+  color: white;
+  padding: 0.5rem 0.3rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-danger:hover {
+  background-color: #ef4444;
+}
+
+.question-card {
+  border: 1px solid var(--soft-blue);
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  background-color: white;
+  transition: all 0.2s;
+}
+
+.question-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+input[type="text"], 
+input[type="email"],
+textarea,
+select {
+  width: 100%;
+  padding: 0.625rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  margin-top: 0.5rem;
+  transition: border-color 0.2s;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--sky-blue);
+  box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.2);
+}
+
+@media (max-width: 640px) {
+  .form-container {
+    border-radius: 0;
+    box-shadow: none;
+  }
 }

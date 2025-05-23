@@ -21,7 +21,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params;
+    const { id } = params;
     const objectId = new ObjectId(id);
 
     const result = await formsCollection.deleteOne({ _id: objectId });

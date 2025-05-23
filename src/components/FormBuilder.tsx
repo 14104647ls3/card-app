@@ -1,6 +1,6 @@
 // components/FormBuilder.tsx
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Form, Question } from '../models/form';
 import QuestionEditor from './QuestionEditor';
 import { v4 as uuidv4 } from 'uuid';
@@ -12,6 +12,7 @@ export default function FormBuilder({ initialForm }: { initialForm: Form }) {
     const [form, setForm] = useState<Form>(initialForm);
     const [saving, setSaving] = useState(false);
     const router = useRouter();
+    const sortableContainerRef = useRef<HTMLDivElement>(null);
 
     const addQuestion = () => {
         const newQuestion: Question = {
@@ -55,15 +56,24 @@ export default function FormBuilder({ initialForm }: { initialForm: Form }) {
     };
 
     useEffect(() => {
-        // Access document object here
-        window.addEventListener('load', () => {
-            const listWithHandle = document.getElementById('sortableHandle');
-            Sortable.create(listWithHandle, {
+        if (sortableContainerRef.current) {
+            const sortable = Sortable.create(sortableContainerRef.current, {
                 handle: '.question-card-drag',
-                animation: 150
+                animation: 150,
+                onEnd: (evt) => {
+                    // Update the order of questions in state when dragging ends
+                    const questions = [...form.questions];
+                    const movedItem = questions.splice(evt.oldIndex!, 1)[0];
+                    questions.splice(evt.newIndex!, 0, movedItem);
+                    setForm({ ...form, questions });
+                }
             });
-        });
-    }, []);
+            
+            return () => {
+                sortable.destroy();
+            };
+        }
+    }, [form.questions]);
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-lightest-blue to-white py-10 px-4">
@@ -85,14 +95,20 @@ export default function FormBuilder({ initialForm }: { initialForm: Form }) {
                         />
                     </div>
                     
-                    <div className=" form-body">
+                    <div className="form-body">
                         {form.questions.length > 0 ? (
-                            <div className="sortableHandle space-y-6 mb-6">
+                            <div ref={sortableContainerRef} className="space-y-6 mb-6">
                                 {form.questions.map((q, index) => (
-                                    <div key={q.id} className=" rounded-lg shadow-sm">
-                                        <span className="question-card-drag">Drag</span>
+                                    <div key={q.id} className="rounded-lg shadow-sm bg-white">
                                         <div className="flex justify-between items-center bg-pale-blue px-4 py-2 rounded-t-lg">
-                                            <div className="text-navy font-medium">Question {index + 1}</div>
+                                            <div className="flex items-center">
+                                                <div className="question-card-drag mr-2 cursor-grab p-1 hover:bg-gray-200 rounded">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+                                                    </svg>
+                                                </div>
+                                                <div className="text-navy font-medium">Question {index + 1}</div>
+                                            </div>
                                             <button 
                                                 onClick={() => removeQuestion(q.id)}
                                                 className="text-red-500 hover:text-red-700"
@@ -103,7 +119,7 @@ export default function FormBuilder({ initialForm }: { initialForm: Form }) {
                                                 </svg>
                                             </button>
                                         </div>
-                                        <div className=" p-5">
+                                        <div className="p-5">
                                                 <QuestionEditor key={q.id} question={q} onChange={(updated) => updateQuestion(q.id, updated)} />
                                         </div>
                                     </div>
@@ -179,8 +195,6 @@ export default function FormBuilder({ initialForm }: { initialForm: Form }) {
                         </svg>
                         Preview
                     </Link>
-                    
-
                 </div>
             </div>
         </div>

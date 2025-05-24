@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { Form, Question } from '../models/form';
 import QuestionEditor from './QuestionEditor';
+import AIFormGenerator from './AIFormGenerator';
 import { v4 as uuidv4 } from 'uuid';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -11,6 +12,7 @@ import Sortable from 'sortablejs';
 export default function FormBuilder({ initialForm }: { initialForm: Form }) {
     const [form, setForm] = useState<Form>(initialForm);
     const [saving, setSaving] = useState(false);
+    const [showAIGenerator, setShowAIGenerator] = useState(false);
     const router = useRouter();
     const sortableContainerRef = useRef<HTMLDivElement>(null);
 
@@ -32,6 +34,26 @@ export default function FormBuilder({ initialForm }: { initialForm: Form }) {
     const updateQuestion = (id: string, updated: Question) => {
         const updatedQuestions = form.questions.map((q) => (q.id === id ? updated : q));
         setForm({ ...form, questions: updatedQuestions });
+    };
+
+    const handleAIFormGenerated = (generatedForm: Omit<Form, '_id'>) => {
+        // Update the current form with AI-generated content
+        setForm({
+            ...form,
+            title: generatedForm.title,
+            description: generatedForm.description,
+            questions: generatedForm.questions,
+        });
+        setShowAIGenerator(false);
+    };
+
+    const clearForm = () => {
+        if (confirm('This will clear all questions. Are you sure?')) {
+            setForm({
+                ...form,
+                questions: [],
+            });
+        }
     };
 
     const saveForm = async () => {
@@ -96,6 +118,54 @@ export default function FormBuilder({ initialForm }: { initialForm: Form }) {
                     </div>
                     
                     <div className="form-body">
+                        {/* AI Form Generator */}
+                        {showAIGenerator && (
+                            <div className="mb-6">
+                                <AIFormGenerator 
+                                    onFormGenerated={handleAIFormGenerated}
+                                    isGenerating={saving}
+                                />
+                            </div>
+                        )}
+
+                        {/* AI Generator Toggle and Clear Form Button */}
+                        {!showAIGenerator && (
+                            <div className="flex gap-3 mb-6">
+                                <button 
+                                    onClick={() => setShowAIGenerator(true)}
+                                    className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-all shadow-sm"
+                                >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                    </svg>
+                                    Generate with AI
+                                </button>
+                                
+                                {form.questions.length > 0 && (
+                                    <button 
+                                        onClick={clearForm}
+                                        className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1-1H7a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                        Clear All
+                                    </button>
+                                )}
+                            </div>
+                        )}
+
+                        {showAIGenerator && (
+                            <div className="mb-6 text-center">
+                                <button 
+                                    onClick={() => setShowAIGenerator(false)}
+                                    className="text-sm text-gray-600 hover:text-gray-800 font-medium"
+                                >
+                                    ← Back to manual editing
+                                </button>
+                            </div>
+                        )}
+
                         {form.questions.length > 0 ? (
                             <div ref={sortableContainerRef} className="space-y-6 mb-6">
                                 {form.questions.map((q, index) => (

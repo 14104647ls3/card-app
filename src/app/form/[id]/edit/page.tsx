@@ -3,7 +3,7 @@ import { formsCollection } from '@/lib/db';
 import FormBuilder from '@/components/FormBuilder';
 import { ObjectId } from 'mongodb';
 
-export default async function FormEditPage({ params }: { params: { id: string } }) {
+export default async function FormEditPage({ params }: { params: Promise<{ id: string }> }) {
     let form;
     const { id } = await params;
   try {

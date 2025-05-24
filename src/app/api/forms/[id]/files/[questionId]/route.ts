@@ -3,10 +3,10 @@ import { getFilesByFormAndQuestion } from '@/lib/db';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string; questionId: string }> }
+  { params }: { params: { id: string; questionId: string }}
 ) {
   try {
-    const { id: formId, questionId } = await params;
+    const { id: formId, questionId } = params;
 
     if (!formId || !questionId) {
       return NextResponse.json(

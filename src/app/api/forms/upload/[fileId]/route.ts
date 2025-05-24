@@ -3,7 +3,7 @@ import { getFileFromGridFS, deleteFileFromGridFS } from '@/lib/db';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ fileId: string }> }
+  { params }: { params: { fileId: string }}
 ) {
   try {
     const { fileId } = await params;
@@ -59,7 +59,7 @@ export async function GET(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ fileId: string }> }
+  { params }: { params: { fileId: string }}
 ) {
   try {
     const { fileId } = await params;

@@ -5,7 +5,7 @@ import { ObjectId } from 'mongodb';
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string }}
 ) {
   try {
     const { id } = await params;
@@ -44,10 +44,10 @@ export async function PUT(req: Request) {
 
 export async function DELETE(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string }}
 ) {
   try {
-    const { id } = await params;
+    const { id } = params;
     const objectId = new ObjectId(id);
 
     const result = await formsCollection.deleteOne({ _id: objectId });

@@ -35,7 +35,7 @@ export default function FormBuilder({ initialForm }: { initialForm: Form }) {
     const updateQuestion = useDebouncedCallback((id: string, updated: Question) => {
         const updatedQuestions = form.questions.map((q) => (q.id === id ? updated : q));
         setForm({ ...form, questions: updatedQuestions });
-    };
+    }, 300);
 
     const handleAIFormGenerated = (generatedForm: Omit<Form, '_id'>) => {
         // Update the current form with AI-generated content

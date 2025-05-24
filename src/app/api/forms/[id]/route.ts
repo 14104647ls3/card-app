@@ -1,7 +1,32 @@
 // app/api/forms/[id]/route.ts
 import { NextResponse } from 'next/server';
-import { formsCollection } from '../../../../lib/db';
+import { formsCollection } from '@/lib/db';
 import { ObjectId } from 'mongodb';
+
+export async function GET(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const { id } = await params;
+    const objectId = new ObjectId(id);
+
+    const form = await formsCollection.findOne({ _id: objectId });
+
+    if (!form) {
+      return NextResponse.json({ error: 'Form not found' }, { status: 404 });
+    }
+
+    const cleanForm = {
+      ...form,
+      _id: form._id.toString(),
+    };
+
+    return NextResponse.json(cleanForm);
+  } catch (err) {
+    return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+  }
+}
 
 export async function PUT(req: Request) {
     const body = await req.json();
@@ -14,4 +39,24 @@ export async function PUT(req: Request) {
         return NextResponse.json({ message: 'Form not found' }, { status: 404 });
     }
   return NextResponse.json({ message: 'Form updated' });
+}
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const { id } = params;
+    const objectId = new ObjectId(id);
+
+    const result = await formsCollection.deleteOne({ _id: objectId });
+
+    if (result.deletedCount === 0) {
+      return NextResponse.json({ error: 'Form not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ message: 'Form deleted' }, { status: 200 });
+  } catch (err) {
+    return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+  }
 }

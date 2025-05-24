@@ -1,12 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { getFilesByFormAndQuestion } from '@/lib/db';
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string; questionId: string }}
-) {
+  request: Request,
+  { params }: { params: Promise<{ id: string; questionId: string }> }): Promise<NextResponse>
+{
   try {
-    const { id: formId, questionId } = params;
+    const { id: formId, questionId } = await params;
 
     if (!formId || !questionId) {
       return NextResponse.json(

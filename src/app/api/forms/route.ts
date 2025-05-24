@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { formsCollection } from '@/lib/db';
 
-export async function POST(request: Request) {
+export async function POST(request: Request): Promise<NextResponse> {
   const body = await request.json();
 
   const newForm = {
@@ -15,7 +15,7 @@ export async function POST(request: Request) {
   return NextResponse.json({ _id: result.insertedId.toString(), ...newForm });
 }
 
-export async function GET() {
+export async function GET(): Promise<NextResponse> {
   const forms = await formsCollection.find().toArray();
 
   const cleanForms = forms.map(form => ({

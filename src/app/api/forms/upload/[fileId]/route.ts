@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { getFileFromGridFS, deleteFileFromGridFS } from '@/lib/db';
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { fileId: string }}
-) {
+export async function GET( 
+  request: Request, 
+  { params }: { params: Promise<{ fileId: string }> }
+): Promise<NextResponse> {
   try {
     const { fileId } = await params;
 
@@ -20,7 +20,7 @@ export async function GET(
     // Convert stream to buffer
     const chunks: Buffer[] = [];
     
-    return new Promise((resolve) => {
+    return new Promise<NextResponse>((resolve) => {
       stream.on('data', (chunk: Buffer) => {
         chunks.push(chunk);
       });
@@ -58,9 +58,9 @@ export async function GET(
 }
 
 export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { fileId: string }}
-) {
+  request: Request,
+  { params }: { params: Promise<{ fileId: string }>}
+): Promise<NextResponse> {
   try {
     const { fileId } = await params;
 

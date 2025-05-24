@@ -36,13 +36,39 @@ export default function FormRenderer({ form }: { form: Form }) {
     const submitForm = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
-        const formDataObject = Object.fromEntries(formData);
-        const payload = JSON.stringify(formDataObject);
-        console.log(payload);
+        
+        // Process form data to handle different question types
+        const processedAnswers: { [key: string]: string | string[] } = {};
+        
+        form.questions.forEach(question => {
+            const value = formData.get(question.id);
+            
+            if (question.type === 'file') {
+                // For file uploads, the value contains comma-separated file IDs
+                if (value && typeof value === 'string' && value.trim()) {
+                    processedAnswers[question.id] = value.split(',').filter(id => id.trim());
+                } else {
+                    processedAnswers[question.id] = [];
+                }
+            } else if (question.type === 'checkbox') {
+                // For checkboxes, get all values
+                const checkboxValues = formData.getAll(question.id);
+                processedAnswers[question.id] = checkboxValues.map(v => v.toString());
+            } else {
+                // For other types, use the single value
+                processedAnswers[question.id] = value?.toString() || '';
+            }
+        });
+
+        const payload = JSON.stringify(processedAnswers);
+        console.log('Submitting form with processed answers:', processedAnswers);
 
         try {
             const res = await fetch(`/api/forms/${form._id}/submit`, {
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
                 body: payload,
             });
             
@@ -90,7 +116,7 @@ export default function FormRenderer({ form }: { form: Form }) {
                         <form className="space-y-6" onSubmit={submitForm} onChange={handleFormChange}>
                             {form.questions.map((q) => (
                                 <div key={q.id} className="question-card">
-                                    <Question question={q} />
+                                    <Question question={q} formId={form._id} />
                                 </div>
                             ))}
                             

@@ -1,7 +1,8 @@
 import React from 'react';
 import { Question as QuestionType } from '@/models/form';
+import FileUploadInput from '@/components/FileUploadInput';
 
-export function Question({ question }: { question: QuestionType }) {
+export function Question({ question, formId }: { question: QuestionType; formId?: string }) {
   // Helper function to render required asterisk
   const requiredMark = question.isRequired ? (
     <span className="text-red-500 ml-1">*</span>
@@ -83,6 +84,19 @@ export function Question({ question }: { question: QuestionType }) {
               </div>
             ))}
           </div>
+        </div>
+      );
+    case 'file':
+      return (
+        <div className="mb-1">
+          {labelElement}
+          <FileUploadInput
+            questionId={question.id}
+            formId={formId}
+            isRequired={question.isRequired}
+            acceptedFileTypes={question.acceptedFileTypes}
+            maxFileSize={question.maxFileSize}
+          />
         </div>
       );
     default:

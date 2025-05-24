@@ -1,11 +1,37 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form } from '../models/form';
 import { Question } from './Question';
 import Link from 'next/link';
 
 export default function FormRenderer({ form }: { form: Form }) {
     const [submitted, setSubmitted] = useState(false);
+    const [hasFormData, setHasFormData] = useState(false);
+
+    // Track form changes to determine if user should be warned about leaving
+    const handleFormChange = () => {
+        setHasFormData(true);
+    };
+
+    // Add beforeunload event listener to warn user about leaving
+    useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            if (hasFormData && !submitted) {
+                const message = 'You have unsaved changes. Are you sure you want to leave?';
+                e.preventDefault();
+                e.returnValue = message; // For older browsers
+                return message; // For modern browsers
+            }
+        };
+
+        // Add event listener
+        window.addEventListener('beforeunload', handleBeforeUnload);
+
+        // Cleanup event listener on component unmount
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+    }, [hasFormData, submitted]);
 
     const submitForm = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -22,6 +48,7 @@ export default function FormRenderer({ form }: { form: Form }) {
             
             if (res.ok) {
                 setSubmitted(true);
+                setHasFormData(false); // Reset form data state after successful submission
             } else {
                 alert('Error submitting form.');
             }
@@ -60,7 +87,7 @@ export default function FormRenderer({ form }: { form: Form }) {
                     </div>
                     
                     <div className="form-body">
-                        <form className="space-y-6" onSubmit={submitForm}>
+                        <form className="space-y-6" onSubmit={submitForm} onChange={handleFormChange}>
                             {form.questions.map((q) => (
                                 <div key={q.id} className="question-card">
                                     <Question question={q} />
@@ -77,6 +104,14 @@ export default function FormRenderer({ form }: { form: Form }) {
                                 <Link 
                                     href="/" 
                                     className="btn-secondary order-2 sm:order-2 text-center"
+                                    onClick={(e) => {
+                                        if (hasFormData && !submitted) {
+                                            const confirmed = confirm('You have unsaved changes. Are you sure you want to leave?');
+                                            if (!confirmed) {
+                                                e.preventDefault();
+                                            }
+                                        }
+                                    }}
                                 >
                                     Back
                                 </Link>

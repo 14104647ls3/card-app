@@ -24,6 +24,7 @@ export async function GET(
 
     return NextResponse.json(cleanForm);
   } catch (err) {
+    console.error('Error fetching form:', err);
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
 }
@@ -57,6 +58,7 @@ export async function DELETE(
 
     return NextResponse.json({ message: 'Form deleted' }, { status: 200 });
   } catch (err) {
+    console.error('Error deleting form:', err);
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
 }

@@ -8,11 +8,6 @@ const filesBucket = new GridFSBucket(
   bucketName: 'files'
 });
 
-const bucket = new GridFSBucket(
-  client.db('project_form_upload'), {
-  bucketName: 'blobBucket'
-});
-
 export const db = client.db('porject_form');
 export const formsCollection = db.collection('forms');
 export const responsesCollection = db.collection('responses');

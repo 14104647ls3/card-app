@@ -20,19 +20,18 @@ If you reference any previous projects, please clearly note what parts were reus
 
 --------
 Done:
+Prompt to generate questions -> LangChain
+QRCode for sharing -> lib qrcode
+Draggable -> react-dnd
+Make a copy
+Form submit refresh confirm
+debounce
 
 
 ToDo:
-Prompt to generate questions -> LangChain
-QRCode for sharing -> lib qrcode
-Empty Form to PDF -> PDF.js
-Draggable -> react-dnd
 Section -> Add Section
 Add link -> URL?
-Make a copy
-Form submit refresh confirm
 most recent response
-debounce
 
 This is a project like google form.
 There are 3 major route.

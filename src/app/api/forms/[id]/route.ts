@@ -3,6 +3,31 @@ import { NextResponse } from 'next/server';
 import { formsCollection } from '@/lib/db';
 import { ObjectId } from 'mongodb';
 
+export async function GET(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const { id } = await params;
+    const objectId = new ObjectId(id);
+
+    const form = await formsCollection.findOne({ _id: objectId });
+
+    if (!form) {
+      return NextResponse.json({ error: 'Form not found' }, { status: 404 });
+    }
+
+    const cleanForm = {
+      ...form,
+      _id: form._id.toString(),
+    };
+
+    return NextResponse.json(cleanForm);
+  } catch (err) {
+    return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+  }
+}
+
 export async function PUT(req: Request) {
     const body = await req.json();
     const _id = new ObjectId(body._id);

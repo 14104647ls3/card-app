@@ -11,10 +11,14 @@ export default function HomePage() {
   const [forms, setForms] = useState<Form[]>([]);
   const router = useRouter();
 
-  useEffect(() => {
+  const fetchForms = () => {
     fetch('/api/forms')
       .then(res => res.json())
       .then(data => setForms(data));
+  };
+
+  useEffect(() => {
+    fetchForms();
   }, []);
 
   const createNewForm = async () => {
@@ -85,7 +89,7 @@ export default function HomePage() {
                 <div className="p-4 flex-grow">
                   <div className="flex justify-between">
                     <h2 className="text-xl font-semibold text-navy mb-2 line-clamp-1">{form.title}</h2>
-                    <CardPopover formId={form._id} />
+                    <CardPopover formId={form._id} onFormCloned={fetchForms} />
                   </div>
                   {form.description && (
                     <p className="text-gray-600 text-sm mb-4 line-clamp-2">{form.description}</p>

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Form } from '../models/form';
 import { CardPopover } from '@/components/ui/CardPopover';
-
+import { useDebouncedCallback } from 'use-debounce';
 
 export default function HomePage() {
   const [forms, setForms] = useState<Form[]>([]);
@@ -21,7 +21,7 @@ export default function HomePage() {
     fetchForms();
   }, []);
 
-  const createNewForm = async () => {
+  const createNewForm = useDebouncedCallback(async () => {
     const res = await fetch('/api/forms', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -33,9 +33,9 @@ export default function HomePage() {
     });
     const newForm = await res.json();
     router.push(`/form/${newForm._id}/edit`);
-  };
+  }, 500);
 
-  const deleteForm = async (id: string) => {
+  const deleteForm = useDebouncedCallback(async (id: string) => {
     const confirmed = confirm('Are you sure you want to delete this form?');
     if (!confirmed) return;
 
@@ -47,7 +47,7 @@ export default function HomePage() {
     } else {
       alert('Failed to delete form');
     }
-  };
+  }, 250);
 
   return (
     <main className="min-h-screen bg-neutral-400 py-10 px-4">

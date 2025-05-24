@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Sortable from 'sortablejs';
+import { useDebouncedCallback } from 'use-debounce';
 
 export default function FormBuilder({ initialForm }: { initialForm: Form }) {
     const [form, setForm] = useState<Form>(initialForm);
@@ -24,17 +25,17 @@ export default function FormBuilder({ initialForm }: { initialForm: Form }) {
         setForm({ ...form, questions: [...form.questions, newQuestion] });
     };
 
-    const removeQuestion = (id: string) => {
+    const removeQuestion = useDebouncedCallback((id: string) => {
         const updatedQuestions = form.questions.filter((q) => q.id !== id);
         setForm({ ...form, questions: updatedQuestions });
-    };
+    }, 300);
     
-    const updateQuestion = (id: string, updated: Question) => {
+    const updateQuestion = useDebouncedCallback((id: string, updated: Question) => {
         const updatedQuestions = form.questions.map((q) => (q.id === id ? updated : q));
         setForm({ ...form, questions: updatedQuestions });
-    };
+    }, 300);
 
-    const saveForm = async () => {
+    const saveForm = useDebouncedCallback(async () => {
         try {
             setSaving(true);
             const res = await fetch(`/api/forms/${form._id}`, {
@@ -53,7 +54,7 @@ export default function FormBuilder({ initialForm }: { initialForm: Form }) {
         } finally {
             setSaving(false);
         }
-    };
+    }, 300);
 
     useEffect(() => {
         if (sortableContainerRef.current) {

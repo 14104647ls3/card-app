@@ -46,7 +46,7 @@ export default function MobileResponsesPage() {
           <div className="fixed inset-0 z-50 sm:block md:block lg:hidden">
             {/* Backdrop */}
             <div 
-              className="absolute inset-0 bg-black bg-opacity-50"
+              className="absolute inset-0 transition-all duration-300 ease-in-out"
               onClick={() => setSidebarOpen(false)}
             />
             

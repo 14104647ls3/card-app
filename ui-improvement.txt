@@ -32,14 +32,16 @@ top bar
 rotue for submission
 response
 fetch & sort on reversed order
+mobile redicet for response
+mobile sidebar bug
 
 ToDo:
 statistic
-mobile redicet for response
-mobile sidebar bug
-[UI p2] Pagination -> Pagination form by section
+response bug
+
 [UI p2] Most recent response
 [UI p2] Search bar
+[UI p2] Pagination -> Pagination form by section
 
 
 This is a project like google form.

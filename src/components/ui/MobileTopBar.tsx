@@ -22,7 +22,7 @@ export function MobileTopBar() {
     });
     const newForm = await res.json();
     router.push(`/form/${newForm._id}/edit`);
-  }, 500);
+  }, 100);
 
   return (
     <header className="bg-white border-b border-soft-blue shadow-sm sticky top-0 z-50 block md:hidden font-sans">

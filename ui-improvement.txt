@@ -30,9 +30,13 @@ debounce
 route for preview
 top bar
 rotue for submission
+response
+fetch & sort on reversed order
 
 ToDo:
-response & statistic !
+statistic
+mobile redicet for response
+mobile sidebar bug
 [UI p2] Pagination -> Pagination form by section
 [UI p2] Most recent response
 [UI p2] Search bar

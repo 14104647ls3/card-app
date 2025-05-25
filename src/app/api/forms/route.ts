@@ -16,7 +16,7 @@ export async function POST(request: Request): Promise<NextResponse> {
 }
 
 export async function GET(): Promise<NextResponse> {
-  const forms = await formsCollection.find().toArray();
+  const forms = await formsCollection.find().sort({ '_id': -1 }).toArray();
 
   const cleanForms = forms.map(form => ({
     ...form,

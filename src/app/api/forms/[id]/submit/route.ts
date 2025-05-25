@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { responsesCollection } from '@/lib/db';
 import { ObjectId } from 'mongodb';
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }>}): Promise<NextResponse> {
     const answers = await req.json();
     const { id } = await params;
     try {

@@ -4,7 +4,7 @@ import { Form } from '../models/form';
 import { Question } from './Question';
 import Link from 'next/link';
 
-export default function FormRenderer({ form }: { form: Form }) {
+export default function FormRenderer({ form, isPreview = false }: { form: Form, isPreview?: boolean }) {
     const [submitted, setSubmitted] = useState(false);
     const [hasFormData, setHasFormData] = useState(false);
 
@@ -121,12 +121,13 @@ export default function FormRenderer({ form }: { form: Form }) {
                             ))}
                             
                             <div className="flex flex-col sm:flex-row gap-3 pt-6">
-                                <button 
-                                    type="submit" 
+                                {!isPreview && (<button
+                                    type="submit"
                                     className="btn-primary order-1 sm:order-1"
                                 >
                                     Submit
                                 </button>
+                                )}
                                 <Link 
                                     href="/" 
                                     className="btn-secondary order-2 sm:order-2 text-center"

@@ -1,6 +1,6 @@
 // app/form/[id]/edit/page.tsx (Form Editing)
 import { formsCollection } from '@/lib/db';
-import FormBuilder from '@/components/FormBuilder';
+import FormRenderer from '@/components/FormRenderer';
 import { ObjectId } from 'mongodb';
 
 export default async function FormEditPage({ params }: { params: Promise<{ id: string }> }) {
@@ -21,7 +21,7 @@ export default async function FormEditPage({ params }: { params: Promise<{ id: s
       questions: form.questions || [],
     };
     
-    return <FormBuilder initialForm={formData} />;
+    return <FormRenderer form={formData} isPreview={true} />;
   } catch (error) {
     console.error("Error finding form:", error);
     return <div>Error loading form</div>;

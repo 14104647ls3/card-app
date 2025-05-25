@@ -3,10 +3,7 @@ import { NextResponse } from 'next/server';
 import { formsCollection } from '@/lib/db';
 import { ObjectId } from 'mongodb';
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function GET(  request: Request,  { params }: { params: Promise<{ id: string }> }): Promise<NextResponse> {
   try {
     const { id } = await params;
     const objectId = new ObjectId(id);
@@ -24,11 +21,12 @@ export async function GET(
 
     return NextResponse.json(cleanForm);
   } catch (err) {
+    console.error('Error fetching form:', err);
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
 }
 
-export async function PUT(req: Request) {
+export async function PUT(req: Request): Promise<NextResponse> {
     const body = await req.json();
     const _id = new ObjectId(body._id);
     delete body._id;
@@ -41,12 +39,9 @@ export async function PUT(req: Request) {
   return NextResponse.json({ message: 'Form updated' });
 }
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(  request: Request,  { params }: { params: Promise<{ id: string }> }): Promise<NextResponse> {
   try {
-    const { id } = params;
+    const { id } = await params;
     const objectId = new ObjectId(id);
 
     const result = await formsCollection.deleteOne({ _id: objectId });
@@ -57,6 +52,7 @@ export async function DELETE(
 
     return NextResponse.json({ message: 'Form deleted' }, { status: 200 });
   } catch (err) {
+    console.error('Error deleting form:', err);
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
 }

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Form } from '../models/form';
 import { CardPopover } from '@/components/ui/CardPopover';
-
+import { useDebouncedCallback } from 'use-debounce';
 
 export default function HomePage() {
   const [forms, setForms] = useState<Form[]>([]);
@@ -21,7 +21,7 @@ export default function HomePage() {
     fetchForms();
   }, []);
 
-  const createNewForm = async () => {
+  const createNewForm = useDebouncedCallback(async () => {
     const res = await fetch('/api/forms', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -33,9 +33,9 @@ export default function HomePage() {
     });
     const newForm = await res.json();
     router.push(`/form/${newForm._id}/edit`);
-  };
+  }, 500);
 
-  const deleteForm = async (id: string) => {
+  const deleteForm = useDebouncedCallback(async (id: string) => {
     const confirmed = confirm('Are you sure you want to delete this form?');
     if (!confirmed) return;
 
@@ -47,7 +47,7 @@ export default function HomePage() {
     } else {
       alert('Failed to delete form');
     }
-  };
+  }, 250);
 
   return (
     <main className="min-h-screen bg-neutral-400 py-10 px-4">
@@ -56,18 +56,6 @@ export default function HomePage() {
           <h1 className="text-3xl md:text-4xl font-bold text-navy mb-2">My Forms</h1>
           <p className="text-ocean-blue text-lg">Create, manage, and share your forms</p>
         </header>
-        
-        <div className="flex justify-center mb-8">
-          <button
-            onClick={createNewForm}
-            className="btn-primary px-6 py-3 rounded-lg shadow-lg transition-all flex items-center gap-2 font-medium"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
-            </svg>
-            Create New Form
-          </button>
-        </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {forms.length === 0 ? (

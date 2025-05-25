@@ -11,7 +11,6 @@ export async function seed() {
   const forms = db.collection('forms');
 
   const sampleForm = {
-    _id: 'form-001',
     title: 'Customer Feedback',
     description: 'We value your input!',
     questions: [

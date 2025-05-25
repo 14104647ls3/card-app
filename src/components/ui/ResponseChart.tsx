@@ -1,12 +1,10 @@
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie, Chart, Doughnut } from "react-chartjs-2";
-import { QuestionStatistics } from "./ResponsesContent";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export function ResponseDoughnut({ statistics }: Any) {
+export function ResponseDoughnut({ statistics }: any) {
     if (!statistics) return null;
-    console.log(statistics);
     const data = {
         // labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
         labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],

@@ -1,17 +1,48 @@
 'use client';
 
+import { FormsSidebar } from '@/components/ui/FormsSidebar';
+import { ResponsesContent } from '@/components/ui/ResponsesContent';
+import { EmptyState, LoadingState, ErrorState } from '@/components/ui/ResponsesStateViews';
+import { useResponses } from '@/hooks/useResponses';
+
 export default function ResponsesPage() {
+  const {
+    forms,
+    selectedForm,
+    responsesData,
+    loading,
+    error,
+    handleFormSelect,
+    retryFetch
+  } = useResponses();
+
   return (
-    <main className="min-h-screen bg-neutral-100 py-10 px-4">
-      <div className="max-w-4xl mx-auto">
-        <header className="mb-8 text-center">
-          <h1 className="text-3xl md:text-4xl font-bold text-navy mb-2">Form Responses</h1>
-          <p className="text-ocean-blue text-lg">View and manage form responses</p>
-        </header>
+    <main className="min-h-screen bg-neutral-100">
+      <div className="flex h-screen">
         
-        <div className="text-center p-10 rounded-lg bg-white shadow-sm border border-soft-blue">
-          <p className="text-gray-600 mb-4">Responses feature coming soon!</p>
-          <p className="text-gray-500 text-sm">This page will display all form responses and analytics.</p>
+        {/* Sidebar - Forms List */}
+        <div className="w-80 bg-white border-r border-soft-blue shadow-sm overflow-y-auto">
+          <FormsSidebar
+            forms={forms}
+            selectedForm={selectedForm}
+            onFormSelect={handleFormSelect}
+          />
+        </div>
+
+        {/* Main Content Area */}
+        <div className="flex-1 overflow-y-auto">
+          {!selectedForm ? (
+            <EmptyState />
+          ) : loading ? (
+            <LoadingState />
+          ) : error ? (
+            <ErrorState error={error} onRetry={retryFetch} />
+          ) : responsesData ? (
+            <ResponsesContent
+              selectedForm={selectedForm}
+              responsesData={responsesData}
+            />
+          ) : null}
         </div>
       </div>
     </main>

@@ -17,7 +17,7 @@ interface MobileHeaderProps {
 
 export function MobileHeader({ selectedForm, responsesData, onToggleSidebar }: MobileHeaderProps) {
   return (
-    <div className="sm:block md:block lg:hidden bg-white border-b border-soft-blue p-4">
+    <div className="sm:block md:block lg:block bg-white border-b border-soft-blue p-4">
       <div className="flex items-center justify-between ">
         <div className="flex items-center gap-3">
             <HamburgerMenuIcon

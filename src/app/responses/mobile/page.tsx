@@ -43,7 +43,7 @@ export default function MobileResponsesPage() {
 
         {/* Sidebar Overlay */}
         {sidebarOpen && (
-          <div className="fixed inset-0 z-50 sm:block md:block lg:hidden">
+          <div className="fixed inset-0 z-50 sm:block md:block lg:block">
             {/* Backdrop */}
             <div 
               className="absolute inset-0 transition-all duration-300 ease-in-out"

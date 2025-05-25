@@ -30,7 +30,7 @@ export function FormsSidebar({
           {isMobile && onClose && (
             <button
               onClick={onClose}
-              className="p-1 rounded-lg hover:bg-gray-100 transition-colors"
+              className="p-1 rounded-lg hover:bg-gray-100 transition-colors transform hover:scale-110"
               aria-label="Close sidebar"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" viewBox="0 0 20 20" fill="currentColor">

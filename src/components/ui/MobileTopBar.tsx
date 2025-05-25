@@ -4,6 +4,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useDebouncedCallback } from 'use-debounce';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { HamburgerMenuIcon } from '@radix-ui/react-icons';
+import { AppIcon } from './AppIcon';
 
 export function MobileTopBar() {
   const router = useRouter();
@@ -29,16 +30,7 @@ export function MobileTopBar() {
         <div className="flex justify-between items-center h-16">
           {/* Left side - Logo and System Name */}
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-ocean-blue rounded-lg flex items-center justify-center">
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                className="h-5 w-5 text-white" 
-                viewBox="0 0 20 20" 
-                fill="currentColor"
-              >
-                <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
-              </svg>
-            </div>
+            <AppIcon />
             <h1 className="text-xl font-bold text-navy">Formify</h1>
           </div>
 

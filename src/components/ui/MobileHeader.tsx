@@ -1,4 +1,5 @@
 import { Form } from '@/models/form';
+import { AppIcon } from './AppIcon';
 
 interface ResponsesData {
   formId: string;
@@ -25,9 +26,10 @@ export function MobileHeader({ selectedForm, responsesData, onToggleSidebar }: M
             aria-label="Toggle forms sidebar"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-navy" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
+              <path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1zm10-4a1 1 0 100-2 1 1 0 000 2zm0 4a1 1 0 100-2 1 1 0 000 2z" />
             </svg>
           </button>
+          <AppIcon size="sm" />
           <div>
             <h1 className="text-lg font-bold text-navy">
               {selectedForm ? selectedForm.title : 'Form Responses'}

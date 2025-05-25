@@ -7,7 +7,9 @@ export default function CardCommon({ form, fetchForms, deleteForm }: { form: For
     return (
         <div 
         key={form._id} 
-        className="bg-stone-200 rounded-lg shadow-md hover:shadow-2xl transition border-none overflow-hidden flex flex-col"
+        className="bg-white rounded-lg shadow-md hover:shadow-2xl transition border overflow-hidden flex flex-col border-soft-blue hover:border-ocean-blue"
+
+
       >
         <div className="p-4 flex-grow">
           <div className="flex justify-between">

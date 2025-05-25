@@ -119,12 +119,33 @@ async function getFormResponsesData(
 
     const responses = await responsesQuery.toArray() as unknown as FormResponse[];
 
+    // Log response structure for debugging
+    console.log('Fetched responses count:', responses.length);
+    if (responses.length > 0) {
+        console.log('Sample response structure:', {
+            hasAnswers: !!responses[0].answers,
+            answersType: typeof responses[0].answers,
+            isArray: Array.isArray(responses[0].answers),
+            answersLength: responses[0].answers?.length
+        });
+    }
+
     // Get total count for pagination
     const totalResponses = await responsesCollection.countDocuments(responseQuery);
 
     // Calculate statistics for each question
     const questionStatistics: QuestionStatistics[] = form.questions.map((question: Question) => {
-        return calculateQuestionStatistics(question, responses);
+        try {
+            return calculateQuestionStatistics(question, responses);
+        } catch (error) {
+            console.error(`Error calculating statistics for question ${question.id}:`, error);
+            return {
+                questionId: question.id,
+                questionLabel: question.label,
+                questionType: question.type,
+                totalAnswers: 0,
+            };
+        }
     });
 
     // Clean up response data for frontend (only if not statistics only)
@@ -145,7 +166,9 @@ async function getFormResponsesData(
 
 function calculateQuestionStatistics(question: Question, responses: FormResponse[]): QuestionStatistics {
     const questionAnswers = responses
-        .map(response => response.answers.find(answer => answer.questionId === question.id))
+        .filter(response => response.answers && Array.isArray(response.answers))
+        .map(response => response.answers.find(
+            answer => answer.questionId === question.id))
         .filter(answer => answer !== undefined) as ResponseAnswer[];
 
     const totalAnswers = questionAnswers.length;

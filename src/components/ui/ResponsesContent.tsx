@@ -1,4 +1,5 @@
 import { Form } from '@/models/form';
+import { ResponseDoughnut } from './ResponseChart';
 
 interface QuestionStatistics {
   questionId: string;
@@ -110,11 +111,15 @@ export function ResponsesContent({
                   Statistics Component Placeholder
                 </p>
                 <p className={`${isMobile ? 'text-xs sm:text-sm' : 'text-sm'} mt-1`}>
-                  {questionStat.questionType === 'radio' || questionStat.questionType === 'checkbox' 
-                    ? 'Chart and percentage distribution will be displayed here'
-                    : 'Answer summary will be displayed here'
-                  }
                 </p>
+                  {questionStat.questionType === 'radio' || questionStat.questionType === 'checkbox' 
+                    ? (<>
+                      Chart and percentage distribution will be displayed here
+                      <ResponseDoughnut props={questionStat.statistics} />
+                      </>)
+                    : ('Answer summary will be displayed here')
+                  }
+                
               </div>
             </div>
           </div>

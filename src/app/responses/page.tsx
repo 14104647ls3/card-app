@@ -2,7 +2,7 @@
 
 export default function ResponsesPage() {
   return (
-    <main className="min-h-screen bg-neutral-400 py-10 px-4">
+    <main className="min-h-screen bg-neutral-100 py-10 px-4">
       <div className="max-w-4xl mx-auto">
         <header className="mb-8 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-navy mb-2">Form Responses</h1>

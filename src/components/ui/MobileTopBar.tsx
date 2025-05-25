@@ -24,7 +24,7 @@ export function MobileTopBar() {
   }, 500);
 
   return (
-    <header className="bg-white border-b border-soft-blue shadow-sm sticky top-0 z-50 block md:hidden">
+    <header className="bg-white border-b border-soft-blue shadow-sm sticky top-0 z-50 block md:hidden font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex justify-between items-center h-16">
           {/* Left side - Logo and System Name */}
@@ -55,7 +55,7 @@ export function MobileTopBar() {
 
             <DropdownMenu.Portal>
               <DropdownMenu.Content
-                className="min-w-[200px] rounded-lg bg-white p-2 shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] will-change-[opacity,transform] data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade data-[side=right]:animate-slideLeftAndFade data-[side=top]:animate-slideDownAndFade"
+                className="min-w-[200px] rounded-lg bg-white p-2 shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] will-change-[opacity,transform] data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade data-[side=right]:animate-slideLeftAndFade data-[side=top]:animate-slideDownAndFade font-sans"
                 sideOffset={8}
                 align="end"
               >

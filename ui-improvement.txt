@@ -25,27 +25,24 @@ Draggable -> react-dnd
 Make a copy
 Form submit refresh confirm
 Upload file
-
+Prompt to generate questions
+debounce
+route for preview
+top bar
+rotue for submission
 
 ToDo:
-Prompt to generate questions
+response & statistic !
 [UI p2] Pagination -> Pagination form by section
 [UI p2] Most recent response
-[UI p2] debounce
-
+[UI p2] Search bar
 
 
 This is a project like google form.
 There are 3 major route.
 '/', /form/[id] and /form/[id]/edit.
 
-You are an experienced senior UXUI designer. You will enhance the UXUI of the current project.
-Requirement:
-    - Don't perform package installation
-    - Use tailwind css and radix-ui
-    - Enhance the UXUI of the 3 routes and the related component to simple modern design
-    - The UXUI must be responsive, mobile friendly
-    - You can change the layout of the HTML element or change the HTML, but functionality must be the same
-    - Use this color palette: #03045e, #023e8a, #0077b6, #0096c7, #00b4d8, #48cae4, #90e0ef, #ade8f4, #caf0f8
-
-This is a Nextjs project, you will need to add 
+Add a topbar ui to /components/ui, the topbar will be rendered on all pages which means it should be configed to be displayed in /src/app/layout.tsx
+- At the left side of the top, there should be an icon of the system and the name of the system. Use a placeholder for the image and use the name 'Formify' as name
+- At the center of the topbar, there should be 2 buttons, 'Froms' and 'Responses'; 'Forms' is equal to the route '/' part below the 'create new form' button. 'Responses' will be used later for route 'r   esponses'
+- At the right side of the topbar, there will be a button of 'Create new form' which is the same button in '/'

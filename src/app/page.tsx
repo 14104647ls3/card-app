@@ -50,14 +50,14 @@ export default function HomePage() {
   }, 250);
 
   return (
-    <main className="min-h-screen bg-neutral-400 py-10 px-4">
+    <main className="min-h-screen bg-neutral-100 py-10 px-4">
       <div className="max-w-4xl mx-auto">
         <header className="mb-8 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-navy mb-2">My Forms</h1>
           <p className="text-ocean-blue text-lg">Create, manage, and share your forms</p>
         </header>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
           {forms.length === 0 ? (
             <div className="col-span-full text-center p-10 rounded-lg bg-white shadow-sm border border-soft-blue">
               <p className="text-gray-600 mb-4">You don&apos;t have any forms yet</p>
@@ -84,7 +84,7 @@ export default function HomePage() {
                   )}
                 </div>
                 
-                <div className="border-t border-pale-blue p-3 bg-lightest-blue flex justify-between">
+                <div className="p-3 bg-green-blue flex justify-between">
                   <div className="flex gap-3">
                     <Link 
                       href={`/form/${form._id}`} 

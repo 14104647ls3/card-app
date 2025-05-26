@@ -1,4 +1,5 @@
 import { Form } from '@/models/form';
+import { ResponseChart } from './ResponseChart';
 
 interface QuickStats {
   totalSubmissions: number;
@@ -93,29 +94,42 @@ export function ResponsesContent({
             
             {/* Display answers */}
             {questionData.answers.length > 0 ? (
-              <div className={`bg-gray-50 ${isMobile ? 'p-3 sm:p-4' : 'p-4'} rounded-lg`}>
-                <h4 className={`font-medium text-navy mb-3 ${isMobile ? 'text-sm' : 'text-base'}`}>
-                  Responses ({questionData.answers.length})
-                </h4>
-                <div className={`space-y-2 max-h-64 overflow-y-auto`}>
-                  {questionData.answers.slice(0, 10).map((answer, answerIndex) => (
-                    <div key={answerIndex} className={`bg-white p-3 rounded border ${isMobile ? 'text-xs sm:text-sm' : 'text-sm'}`}>
-                      <div className="font-medium text-gray-800">
-                        {Array.isArray(answer.value) 
-                          ? (answer.value as string[]).join(', ')
-                          : String(answer.value)
-                        }
+              <div className={`space-y-4`}>
+                {/* Chart for radio and checkbox questions */}
+                {(questionData.questionType === 'radio' || questionData.questionType === 'checkbox') && (
+                  <div className={`bg-gray-50 ${isMobile ? 'p-3 sm:p-4' : 'p-4'} rounded-lg`}>
+                    <h4 className={`font-medium text-navy mb-3 ${isMobile ? 'text-sm' : 'text-base'}`}>
+                      Response Distribution
+                    </h4>
+                    <ResponseChart questionData={questionData} isMobile={isMobile} />
+                  </div>
+                )}
+                
+                {/* Response list */}
+                <div className={`bg-gray-50 ${isMobile ? 'p-3 sm:p-4' : 'p-4'} rounded-lg`}>
+                  <h4 className={`font-medium text-navy mb-3 ${isMobile ? 'text-sm' : 'text-base'}`}>
+                    Individual Responses ({questionData.answers.length})
+                  </h4>
+                  <div className={`space-y-2 max-h-64 overflow-y-auto`}>
+                    {questionData.answers.slice(0, 10).map((answer, answerIndex) => (
+                      <div key={answerIndex} className={`bg-white p-3 rounded border ${isMobile ? 'text-xs sm:text-sm' : 'text-sm'}`}>
+                        <div className="font-medium text-gray-800">
+                          {Array.isArray(answer.value) 
+                            ? (answer.value as string[]).join(', ')
+                            : String(answer.value)
+                          }
+                        </div>
+                        <div className="text-gray-500 text-xs mt-1">
+                          {new Date(answer.submittedAt).toLocaleDateString()} at {new Date(answer.submittedAt).toLocaleTimeString()}
+                        </div>
                       </div>
-                      <div className="text-gray-500 text-xs mt-1">
-                        {new Date(answer.submittedAt).toLocaleDateString()} at {new Date(answer.submittedAt).toLocaleTimeString()}
+                    ))}
+                    {questionData.answers.length > 10 && (
+                      <div className={`text-center text-gray-500 ${isMobile ? 'text-xs' : 'text-sm'} py-2`}>
+                        ... and {questionData.answers.length - 10} more responses
                       </div>
-                    </div>
-                  ))}
-                  {questionData.answers.length > 10 && (
-                    <div className={`text-center text-gray-500 ${isMobile ? 'text-xs' : 'text-sm'} py-2`}>
-                      ... and {questionData.answers.length - 10} more responses
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               </div>
             ) : (

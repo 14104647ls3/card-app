@@ -52,6 +52,7 @@ export default function QuestionEditor({
         <input
           className="w-full border-0 border-b border-pale-blue p-2 text-lg font-medium focus:ring-0 focus:border-sky-blue"
           value={question.label}
+          onFocus={(e) => e.target.select()}
           onChange={(e) => updateField('label', e.target.value)}
           placeholder="Question text"
         />

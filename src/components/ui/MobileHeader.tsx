@@ -1,12 +1,26 @@
 import { Form } from '@/models/form';
-import { AppIcon } from './AppIcon';
 import { HamburgerMenuIcon } from '@radix-ui/react-icons';
+interface QuickStats {
+  totalSubmissions: number;
+  numberOfQuestions: number;
+}
+
+interface QuestionAnswers {
+  questionId: string;
+  questionLabel: string;
+  questionType: string;
+  answers: Array<{
+    responseId: string;
+    questionType: string;
+    value: unknown;
+    submittedAt: Date;
+  }>;
+}
+
 interface ResponsesData {
-  formId: string;
-  formTitle: string;
-  totalResponses: number;
-  questionStatistics: unknown[];
-  responses: unknown[];
+  quickStats: QuickStats;
+  groupedAnswers: QuestionAnswers[];
+  allResponses: unknown[];
 }
 
 interface MobileHeaderProps {
@@ -33,7 +47,7 @@ export function MobileHeader({ selectedForm, responsesData, onToggleSidebar }: M
             </h1>
             {selectedForm && (
               <p className="text-xs text-gray-600">
-                {responsesData?.totalResponses || 0} responses
+                {responsesData?.quickStats.totalSubmissions || 0} responses
               </p>
             )}
           </div>
@@ -41,7 +55,7 @@ export function MobileHeader({ selectedForm, responsesData, onToggleSidebar }: M
         {selectedForm && (
           <div className="text-right">
             <div className="text-lg font-bold text-ocean-blue">
-              {responsesData?.totalResponses || 0}
+              {responsesData?.quickStats.totalSubmissions || 0}
             </div>
             <div className="text-xs text-gray-600">Total</div>
           </div>

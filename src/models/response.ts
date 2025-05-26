@@ -1,3 +1,5 @@
+import { QuestionType } from "@/models/form";
+
 export interface FileUpload {
   fileId: string;
   filename: string;
@@ -9,6 +11,7 @@ export interface FileUpload {
 
 export interface ResponseAnswer {
   questionId: string;
+  questionType: QuestionType;
   value: string | string[] | FileUpload[]; // Support for different question types
 }
 

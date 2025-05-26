@@ -1,36 +1,25 @@
 import { NextResponse } from 'next/server';
 import { formsCollection, responsesCollection } from '@/lib/db';
 import { ObjectId } from 'mongodb';
-import { Form, Question } from '@/models/form';
-import { FormResponse, ResponseAnswer } from '@/models/response';
+import { Form } from '@/models/form';
+import { FormResponse } from '@/models/response';
 
-interface QuestionStatistics {
+// Types
+interface QuickStats {
+    totalSubmissions: number;
+    numberOfQuestions: number;
+}
+
+interface QuestionAnswers {
     questionId: string;
     questionLabel: string;
     questionType: string;
-    totalAnswers: number;
-    statistics?: {
-        [option: string]: {
-            count: number;
-            percentage: number;
-        };
-    };
-}
-
-interface ResponsesData {
-    formId: string;
-    formTitle: string;
-    totalResponses: number;
-    questionStatistics: QuestionStatistics[];
-    responses: FormResponse[];
-}
-
-interface FilterOptions {
-    dateFrom?: string;
-    dateTo?: string;
-    limit?: number;
-    offset?: number;
-    statisticsOnly?: boolean;
+    answers: Array<{
+        responseId: string;
+        questionType: string;
+        value: any; // Can be string, string[], or FileUpload[]
+        submittedAt: Date;
+    }>;
 }
 
 export async function GET(
@@ -39,184 +28,163 @@ export async function GET(
 ): Promise<NextResponse> {
     try {
         const { id } = await params;
-        const objectId = new ObjectId(id);
+        
+        if (!ObjectId.isValid(id)) {
+            return NextResponse.json({ error: 'Invalid form ID' }, { status: 400 });
+        }
 
-        // Parse query parameters
+        const formId = new ObjectId(id);
         const url = new URL(request.url);
-        const statisticsOnly = url.searchParams.get('statisticsOnly') === 'true';
-        const limit = url.searchParams.get('limit') ? parseInt(url.searchParams.get('limit')!) : undefined;
-        const offset = url.searchParams.get('offset') ? parseInt(url.searchParams.get('offset')!) : 0;
+        const action = url.searchParams.get('action');
 
-        const responseData = await getFormResponsesData(objectId, {
-            statisticsOnly,
-            limit,
-            offset
-        });
+        switch (action) {
+            case 'stats':
+                const stats = await getQuickStats(formId);
+                return NextResponse.json(stats);
+            
+            case 'grouped':
+                const grouped = await getGroupedQuestionAnswers(formId);
+                return NextResponse.json(grouped);
+            
+            default:
+                const responses = await getAllResponses(formId);
+                return NextResponse.json(responses);
+        }
 
-        return NextResponse.json(responseData);
-    } catch (err) {
-        console.error('Error fetching form responses:', err);
-        return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+    } catch (error) {
+        console.error('Error in responses route:', error);
+        return NextResponse.json({ 
+            error: 'Failed to fetch data',
+            details: error instanceof Error ? error.message : 'Unknown error'
+        }, { status: 500 });
     }
 }
 
-export async function POST(
-    request: Request,
-    { params }: { params: Promise<{ id: string }> }
-): Promise<NextResponse> {
-    try {
-        const { id } = await params;
-        const objectId = new ObjectId(id);
-        const filterOptions: FilterOptions = await request.json();
-
-        const responseData = await getFormResponsesData(objectId, filterOptions);
-
-        return NextResponse.json(responseData);
-    } catch (err) {
-        console.error('Error fetching filtered form responses:', err);
-        return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
-    }
-}
-
-async function getFormResponsesData(
-    formObjectId: ObjectId,
-    options: FilterOptions = {}
-): Promise<ResponsesData> {
-    // Fetch the form to get question details
-    const form = await formsCollection.findOne({ _id: formObjectId }) as Form | null;
-
+// 1. Get all question responses using form ID
+async function getAllResponses(formId: ObjectId): Promise<FormResponse[]> {
+    // Get form to get question details
+    const form = await formsCollection.findOne({ _id: formId }) as Form | null;
     if (!form) {
         throw new Error('Form not found');
     }
 
-    // Build query for responses
-    const responseQuery: { formId: ObjectId; submittedAt?: { $gte?: Date; $lte?: Date } } = {
-        formId: formObjectId
-    };
+    const responses = await responsesCollection
+        .find({ formId })
+        .sort({ submittedAt: -1 })
+        .toArray() as unknown as any[];
 
-    if (options.dateFrom || options.dateTo) {
-        responseQuery.submittedAt = {};
-        if (options.dateFrom) {
-            responseQuery.submittedAt.$gte = new Date(options.dateFrom);
+    return responses.map(response => {
+        let processedAnswers: any[] = [];
+
+        if (response.answers) {
+            if (Array.isArray(response.answers)) {
+                // Array format: add questionType to each answer
+                processedAnswers = response.answers.map((answer: any) => {
+                    const question = form.questions.find(q => q.id === answer.questionId);
+                    return {
+                        ...answer,
+                        questionType: question?.type || 'unknown'
+                    };
+                });
+            } else if (typeof response.answers === 'object') {
+                // Object format: convert to array with questionType
+                processedAnswers = Object.keys(response.answers).map(questionId => {
+                    const question = form.questions.find(q => q.id === questionId);
+                    return {
+                        questionId,
+                        questionType: question?.type || 'unknown',
+                        value: response.answers[questionId]
+                    };
+                });
+            }
         }
-        if (options.dateTo) {
-            responseQuery.submittedAt.$lte = new Date(options.dateTo);
-        }
-    }
 
-    // Fetch responses with optional pagination
-    let responsesQuery = responsesCollection
-        .find(responseQuery)
-        .sort({ submittedAt: -1 });
-
-    if (options.offset) {
-        responsesQuery = responsesQuery.skip(options.offset);
-    }
-
-    if (options.limit) {
-        responsesQuery = responsesQuery.limit(options.limit);
-    }
-
-    const responses = await responsesQuery.toArray() as unknown as FormResponse[];
-
-    // Log response structure for debugging
-    console.log('Fetched responses count:', responses.length);
-    if (responses.length > 0) {
-        console.log('Sample response structure:', {
-            hasAnswers: !!responses[0].answers,
-            answersType: typeof responses[0].answers,
-            isArray: Array.isArray(responses[0].answers),
-            answersLength: responses[0].answers?.length
-        });
-    }
-
-    // Get total count for pagination
-    const totalResponses = await responsesCollection.countDocuments(responseQuery);
-
-    // Calculate statistics for each question
-    const questionStatistics: QuestionStatistics[] = form.questions.map((question: Question) => {
-        try {
-            return calculateQuestionStatistics(question, responses);
-        } catch (error) {
-            console.error(`Error calculating statistics for question ${question.id}:`, error);
-            return {
-                questionId: question.id,
-                questionLabel: question.label,
-                questionType: question.type,
-                totalAnswers: 0,
-            };
-        }
+        return {
+            ...response,
+            _id: response._id?.toString(),
+            formId: response.formId.toString(),
+            answers: processedAnswers
+        };
     });
+}
 
-    // Clean up response data for frontend (only if not statistics only)
-    const cleanResponses = options.statisticsOnly ? [] : responses.map(response => ({
-        ...response,
-        _id: response._id?.toString(),
-        formId: response.formId.toString(),
-    }));
+// 2. Get quick stats for ResponsesContent.tsx
+async function getQuickStats(formId: ObjectId): Promise<QuickStats> {
+    // Get form to count questions
+    const form = await formsCollection.findOne({ _id: formId }) as Form | null;
+    if (!form) {
+        throw new Error('Form not found');
+    }
+
+    // Get all responses
+    const responses = await responsesCollection
+        .find({ formId })
+        .toArray();
 
     return {
-        formId: form._id.toString(),
-        formTitle: form.title,
-        totalResponses,
-        questionStatistics,
-        responses: cleanResponses,
+        totalSubmissions: responses.length,
+        numberOfQuestions: form.questions.length
     };
 }
 
-function calculateQuestionStatistics(question: Question, responses: FormResponse[]): QuestionStatistics {
-    const questionAnswers = responses
-        .filter(response => response.answers && Array.isArray(response.answers))
-        .map(response => response.answers.find(
-            answer => answer.questionId === question.id))
-        .filter(answer => answer !== undefined) as ResponseAnswer[];
+// 3. Get responses grouped by each question
+async function getGroupedQuestionAnswers(formId: ObjectId): Promise<QuestionAnswers[]> {
+    // Get form to get question details
+    const form = await formsCollection.findOne({ _id: formId }) as Form | null;
+    if (!form) {
+        throw new Error('Form not found');
+    }
 
-    const totalAnswers = questionAnswers.length;
+    // Get all responses
+    const responses = await responsesCollection
+        .find({ formId })
+        .sort({ submittedAt: -1 })
+        .toArray() as unknown as any[];
 
-    const baseStats: QuestionStatistics = {
-        questionId: question.id,
-        questionLabel: question.label,
-        questionType: question.type,
-        totalAnswers,
-    };
+    // Group answers by question
+    const groupedAnswers: QuestionAnswers[] = form.questions.map(question => {
+        const questionAnswers: Array<{
+            responseId: string;
+            questionType: string;
+            value: any;
+            submittedAt: Date;
+        }> = [];
 
-    // For multiple choice (radio) and checkbox questions, calculate detailed statistics
-    if ((question.type === 'radio' || question.type === 'checkbox') && question.options) {
-        const statistics: { [option: string]: { count: number; percentage: number } } = {};
-
-        // Initialize all options with 0 count
-        question.options.forEach(option => {
-            statistics[option] = { count: 0, percentage: 0 };
-        });
-
-        // Count answers for each option
-        questionAnswers.forEach(answer => {
-            if (question.type === 'radio' && typeof answer.value === 'string') {
-                // Single choice - radio button
-                if (statistics[answer.value]) {
-                    statistics[answer.value].count++;
-                }
-            } else if (question.type === 'checkbox' && Array.isArray(answer.value)) {
-                // Multiple choice - checkbox
-                answer.value.forEach(selectedOption => {
-                    if (typeof selectedOption === 'string' && statistics[selectedOption]) {
-                        statistics[selectedOption].count++;
+        responses.forEach(response => {
+            // Handle both array format (ResponseAnswer[]) and object format (key-value pairs)
+            let answerValue = null;
+            
+            if (response.answers) {
+                if (Array.isArray(response.answers)) {
+                    // Array format: find answer by questionId
+                    const answer = response.answers.find((ans: any) => ans.questionId === question.id);
+                    if (answer) {
+                        answerValue = answer.value;
                     }
+                } else if (typeof response.answers === 'object') {
+                    // Object format: use question.id as key
+                    answerValue = response.answers[question.id];
+                }
+            }
+
+            // Only add if we found a valid answer (not null, undefined, or empty string)
+            if (answerValue !== null && answerValue !== undefined && answerValue !== '') {
+                questionAnswers.push({
+                    responseId: response._id?.toString() || '',
+                    questionType: question.type,
+                    value: answerValue,
+                    submittedAt: response.submittedAt
                 });
             }
         });
 
-        // Calculate percentages
-        Object.keys(statistics).forEach(option => {
-            if (totalAnswers > 0) {
-                statistics[option].percentage = Math.round(
-                    (statistics[option].count / totalAnswers) * 100 * 100
-                ) / 100; // Round to 2 decimal places
-            }
-        });
+        return {
+            questionId: question.id,
+            questionLabel: question.label,
+            questionType: question.type,
+            answers: questionAnswers
+        };
+    });
 
-        baseStats.statistics = statistics;
-    }
-
-    return baseStats;
+    return groupedAnswers;
 }

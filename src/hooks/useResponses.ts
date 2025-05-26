@@ -1,25 +1,27 @@
 import { useEffect, useState } from 'react';
 import { Form } from '@/models/form';
 
-interface QuestionStatistics {
+interface QuickStats {
+  totalSubmissions: number;
+  numberOfQuestions: number;
+}
+
+interface QuestionAnswers {
   questionId: string;
   questionLabel: string;
   questionType: string;
-  totalAnswers: number;
-  statistics?: {
-    [option: string]: {
-      count: number;
-      percentage: number;
-    };
-  };
+  answers: Array<{
+    responseId: string;
+    questionType: string;
+    value: unknown;
+    submittedAt: Date;
+  }>;
 }
 
 interface ResponsesData {
-  formId: string;
-  formTitle: string;
-  totalResponses: number;
-  questionStatistics: QuestionStatistics[];
-  responses: unknown[];
+  quickStats: QuickStats;
+  groupedAnswers: QuestionAnswers[];
+  allResponses: unknown[];
 }
 
 export function useResponses() {
@@ -37,17 +39,37 @@ export function useResponses() {
       .catch(err => console.error('Error fetching forms:', err));
   }, []);
 
-  // Fetch responses for selected form
+  // Fetch responses for selected form using new API structure
   const fetchFormResponses = async (formId: string) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`/api/forms/${formId}/responses`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch responses');
+      // Fetch quick stats
+      const statsResponse = await fetch(`/api/forms/${formId}/responses?action=stats`);
+      if (!statsResponse.ok) {
+        throw new Error('Failed to fetch stats');
       }
-      const data = await response.json();
-      setResponsesData(data);
+      const quickStats = await statsResponse.json();
+
+      // Fetch grouped answers
+      const groupedResponse = await fetch(`/api/forms/${formId}/responses?action=grouped`);
+      if (!groupedResponse.ok) {
+        throw new Error('Failed to fetch grouped answers');
+      }
+      const groupedAnswers = await groupedResponse.json();
+
+      // Fetch all responses
+      const allResponse = await fetch(`/api/forms/${formId}/responses`);
+      if (!allResponse.ok) {
+        throw new Error('Failed to fetch all responses');
+      }
+      const allResponses = await allResponse.json();
+
+      setResponsesData({
+        quickStats,
+        groupedAnswers,
+        allResponses
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
       setResponsesData(null);

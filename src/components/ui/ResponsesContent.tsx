@@ -30,10 +30,10 @@ interface ResponsesContentProps {
   isMobile?: boolean;
 }
 
-export function ResponsesContent({ 
-  selectedForm, 
-  responsesData, 
-  isMobile = false 
+export function ResponsesContent({
+  selectedForm,
+  responsesData,
+  isMobile = false
 }: ResponsesContentProps) {
   return (
     <div className={`${isMobile ? 'p-4 sm:p-6' : 'p-6'}`}>
@@ -54,7 +54,7 @@ export function ResponsesContent({
           </div>
         </div>
       </div>
-        
+
       {/* Quick Stats - Removed "Answered Questions" section */}
       <div className={`grid ${isMobile ? 'grid-cols-2 gap-3 sm:gap-4' : 'grid-cols-1 md:grid-cols-2 gap-4'} mb-6`}>
         <div className={`bg-white ${isMobile ? 'p-3 sm:p-4' : 'p-4'} rounded-lg border border-soft-blue`}>
@@ -78,7 +78,7 @@ export function ResponsesContent({
         <h2 className={`${isMobile ? 'text-xl sm:text-2xl' : 'text-2xl'} font-bold text-navy mb-4`}>
           Question Responses
         </h2>
-        
+
         {responsesData?.groupedAnswers.map((questionData, index) => (
           <div key={questionData.questionId} className={`bg-white ${isMobile ? 'p-4 sm:p-6' : 'p-6'} rounded-lg border border-soft-blue`}>
             <div className="mb-4">
@@ -91,7 +91,7 @@ export function ResponsesContent({
                 <span>Total Answers: {questionData.answers.length}</span>
               </div>
             </div>
-            
+
             {/* Display answers */}
             {questionData.answers.length > 0 ? (
               <div className={`space-y-4`}>
@@ -104,7 +104,7 @@ export function ResponsesContent({
                     <ResponseChart questionData={questionData} isMobile={isMobile} />
                   </div>
                 )}
-                
+
                 {/* Response list */}
                 <div className={`bg-gray-50 ${isMobile ? 'p-3 sm:p-4' : 'p-4'} rounded-lg`}>
                   <h4 className={`font-medium text-navy mb-3 ${isMobile ? 'text-sm' : 'text-base'}`}>
@@ -112,13 +112,22 @@ export function ResponsesContent({
                   </h4>
                   <div className={`space-y-2 overflow-y-auto`} style={{ maxHeight: '240px' }}>
                     {questionData.answers.map((answer, answerIndex) => (
-                      <div key={answerIndex} className={`bg-white p-3 rounded border ${isMobile ? 'text-xs sm:text-sm' : 'text-sm'}`}>
+                      <div key={answerIndex} className={`bg-white p-3 rounded flex flex-wrap justify-between border ${isMobile ? 'text-xs sm:text-sm' : 'text-sm'}`}>
                         <div className="font-medium text-gray-800">
-                          {Array.isArray(answer.value) 
+                          {Array.isArray(answer.value)
                             ? (answer.value as string[]).join(', ')
                             : String(answer.value)
                           }
+                          {answer.questionType === 'file' && (
+                            <button
+                              className="download-file-button align-right bg-blue-500 text-white ml-8 px-4 py-2 rounded-md break flex-grow-1"
+                              onClick={() => {
+                                const fileUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/api/forms/download/${answer.value}`;
+                                window.open(fileUrl, '_blank');
+                              }}
+                            >Download file</button>)}
                         </div>
+                        <div className="break"></div>
                         <div className="text-gray-500 text-xs mt-1">
                           {new Date(answer.submittedAt).toLocaleDateString()} at {new Date(answer.submittedAt).toLocaleTimeString()}
                         </div>
@@ -143,7 +152,7 @@ export function ResponsesContent({
             )}
           </div>
         ))}
-        
+
         {responsesData?.groupedAnswers.length === 0 && (
           <div className={`text-center ${isMobile ? 'py-8 sm:py-12' : 'py-12'}`}>
             <div className={`${isMobile ? 'w-12 h-12 sm:w-16 sm:h-16' : 'w-16 h-16'} bg-lightest-blue rounded-full flex items-center justify-center mx-auto mb-4`}>

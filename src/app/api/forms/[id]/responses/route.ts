@@ -145,6 +145,7 @@ async function getGroupedQuestionAnswers(formId: ObjectId): Promise<QuestionAnsw
     const groupedAnswers: QuestionAnswers[] = form.questions.map(question => {
         const questionAnswers: Array<{
             responseId: string;
+            questionType: string;
             value: any;
             submittedAt: Date;
         }> = [];
@@ -170,6 +171,7 @@ async function getGroupedQuestionAnswers(formId: ObjectId): Promise<QuestionAnsw
             if (answerValue !== null && answerValue !== undefined && answerValue !== '') {
                 questionAnswers.push({
                     responseId: response._id?.toString() || '',
+                    questionType: question.type,
                     value: answerValue,
                     submittedAt: response.submittedAt
                 });

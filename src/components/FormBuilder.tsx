@@ -28,15 +28,15 @@ export default function FormBuilder({ initialForm }: { initialForm: Form }) {
         setForm({ ...form, questions: [...form.questions, newQuestion] });
     };
 
-    const removeQuestion = useDebouncedCallback((id: string) => {
+    const removeQuestion = (id: string) => {
         const updatedQuestions = form.questions.filter((q) => q.id !== id);
         setForm({ ...form, questions: updatedQuestions });
-    }, 300);
+    };
 
-    const updateQuestion = useDebouncedCallback((id: string, updated: Question) => {
+    const updateQuestion = (id: string, updated: Question) => {
         const updatedQuestions = form.questions.map((q) => (q.id === id ? updated : q));
         setForm({ ...form, questions: updatedQuestions });
-    }, 300);
+    };
 
     const handleAIFormGenerated = (generatedForm: Omit<Form, '_id'>) => {
         // Update the current form with AI-generated content
@@ -107,12 +107,14 @@ export default function FormBuilder({ initialForm }: { initialForm: Form }) {
                         <input
                             className="text-2xl md:text-3xl font-bold w-full bg-transparent border-0 focus:ring-2 focus:ring-white focus:outline-none text-white placeholder-soft-blue"
                             value={form.title}
+                            onFocus={(e) => e.target.select()}
                             onChange={(e) => setForm({ ...form, title: e.target.value })}
                             placeholder="Form Title"
                         />
                         <textarea
                             className="w-full mt-3 bg-transparent border-0 focus:ring-2 focus:ring-white focus:outline-none text-soft-blue placeholder-soft-blue resize-none"
                             value={form.description || ''}
+                            onFocus={(e) => e.target.select()}
                             onChange={(e) => setForm({ ...form, description: e.target.value })}
                             placeholder="Form Description"
                             rows={2}

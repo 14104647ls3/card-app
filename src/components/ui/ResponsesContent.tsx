@@ -110,8 +110,8 @@ export function ResponsesContent({
                   <h4 className={`font-medium text-navy mb-3 ${isMobile ? 'text-sm' : 'text-base'}`}>
                     Individual Responses ({questionData.answers.length})
                   </h4>
-                  <div className={`space-y-2 max-h-64 overflow-y-auto`}>
-                    {questionData.answers.slice(0, 10).map((answer, answerIndex) => (
+                  <div className={`space-y-2 overflow-y-auto`} style={{ maxHeight: '240px' }}>
+                    {questionData.answers.map((answer, answerIndex) => (
                       <div key={answerIndex} className={`bg-white p-3 rounded border ${isMobile ? 'text-xs sm:text-sm' : 'text-sm'}`}>
                         <div className="font-medium text-gray-800">
                           {Array.isArray(answer.value) 
@@ -124,11 +124,6 @@ export function ResponsesContent({
                         </div>
                       </div>
                     ))}
-                    {questionData.answers.length > 10 && (
-                      <div className={`text-center text-gray-500 ${isMobile ? 'text-xs' : 'text-sm'} py-2`}>
-                        ... and {questionData.answers.length - 10} more responses
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>

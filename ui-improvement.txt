@@ -34,21 +34,10 @@ response
 fetch & sort on reversed order
 mobile redicet for response
 mobile sidebar bug
-
-ToDo:
 statistic
 response bug
 
+ToDo:
 [UI p2] Most recent response
 [UI p2] Search bar
 [UI p2] Pagination -> Pagination form by section
-
-
-This is a project like google form.
-There are 3 major route.
-'/', /form/[id] and /form/[id]/edit.
-
-Add a topbar ui to /components/ui, the topbar will be rendered on all pages which means it should be configed to be displayed in /src/app/layout.tsx
-- At the left side of the top, there should be an icon of the system and the name of the system. Use a placeholder for the image and use the name 'Formify' as name
-- At the center of the topbar, there should be 2 buttons, 'Froms' and 'Responses'; 'Forms' is equal to the route '/' part below the 'create new form' button. 'Responses' will be used later for route 'r   esponses'
-- At the right side of the topbar, there will be a button of 'Create new form' which is the same button in '/'

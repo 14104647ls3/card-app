@@ -4,6 +4,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useDebouncedCallback } from 'use-debounce';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { HamburgerMenuIcon } from '@radix-ui/react-icons';
+import { AppIcon } from './AppIcon';
 
 export function MobileTopBar() {
   const router = useRouter();
@@ -21,24 +22,15 @@ export function MobileTopBar() {
     });
     const newForm = await res.json();
     router.push(`/form/${newForm._id}/edit`);
-  }, 500);
+  }, 100);
 
   return (
-    <header className="bg-white border-b border-soft-blue shadow-sm sticky top-0 z-50 block md:hidden">
+    <header className="bg-white border-b border-soft-blue shadow-sm sticky top-0 z-50 block md:hidden font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex justify-between items-center h-16">
           {/* Left side - Logo and System Name */}
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-ocean-blue rounded-lg flex items-center justify-center">
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                className="h-5 w-5 text-white" 
-                viewBox="0 0 20 20" 
-                fill="currentColor"
-              >
-                <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
-              </svg>
-            </div>
+            <AppIcon />
             <h1 className="text-xl font-bold text-navy">Formify</h1>
           </div>
 
@@ -55,7 +47,7 @@ export function MobileTopBar() {
 
             <DropdownMenu.Portal>
               <DropdownMenu.Content
-                className="min-w-[200px] rounded-lg bg-white p-2 shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] will-change-[opacity,transform] data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade data-[side=right]:animate-slideLeftAndFade data-[side=top]:animate-slideDownAndFade"
+                className="min-w-[200px] rounded-lg bg-white p-2 shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] will-change-[opacity,transform] data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade data-[side=right]:animate-slideLeftAndFade data-[side=top]:animate-slideDownAndFade font-sans"
                 sideOffset={8}
                 align="end"
               >

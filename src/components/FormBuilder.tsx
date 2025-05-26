@@ -14,6 +14,7 @@ export default function FormBuilder({ initialForm }: { initialForm: Form }) {
     const [form, setForm] = useState<Form>(initialForm);
     const [saving, setSaving] = useState(false);
     const [showAIGenerator, setShowAIGenerator] = useState(false);
+    const [showAddQuestion, setShowAddQuestion] = useState(true);
     const router = useRouter();
     const sortableContainerRef = useRef<HTMLDivElement>(null);
 
@@ -31,7 +32,7 @@ export default function FormBuilder({ initialForm }: { initialForm: Form }) {
         const updatedQuestions = form.questions.filter((q) => q.id !== id);
         setForm({ ...form, questions: updatedQuestions });
     }, 300);
-    
+
     const updateQuestion = useDebouncedCallback((id: string, updated: Question) => {
         const updatedQuestions = form.questions.map((q) => (q.id === id ? updated : q));
         setForm({ ...form, questions: updatedQuestions });
@@ -91,7 +92,7 @@ export default function FormBuilder({ initialForm }: { initialForm: Form }) {
                     setForm({ ...form, questions });
                 }
             });
-            
+
             return () => {
                 sortable.destroy();
             };
@@ -117,12 +118,12 @@ export default function FormBuilder({ initialForm }: { initialForm: Form }) {
                             rows={2}
                         />
                     </div>
-                    
+
                     <div className="form-body">
                         {/* AI Form Generator */}
                         {showAIGenerator && (
                             <div className="mb-6">
-                                <AIFormGenerator 
+                                <AIFormGenerator
                                     onFormGenerated={handleAIFormGenerated}
                                     isGenerating={saving}
                                 />
@@ -132,18 +133,8 @@ export default function FormBuilder({ initialForm }: { initialForm: Form }) {
                         {/* AI Generator Toggle and Clear Form Button */}
                         {!showAIGenerator && (
                             <div className="flex gap-3 mb-6">
-                                <button 
-                                    onClick={() => setShowAIGenerator(true)}
-                                    className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-all shadow-sm"
-                                >
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                    </svg>
-                                    Generate with AI
-                                </button>
-                                
                                 {form.questions.length > 0 && (
-                                    <button 
+                                    <button
                                         onClick={clearForm}
                                         className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
                                     >
@@ -158,8 +149,11 @@ export default function FormBuilder({ initialForm }: { initialForm: Form }) {
 
                         {showAIGenerator && (
                             <div className="mb-6 text-center">
-                                <button 
-                                    onClick={() => setShowAIGenerator(false)}
+                                <button
+                                    onClick={() => {
+                                        setShowAIGenerator(false)
+                                        setShowAddQuestion(true)
+                                    }}
                                     className="text-sm text-gray-600 hover:text-gray-800 font-medium"
                                 >
                                     ← Back to manual editing
@@ -180,7 +174,7 @@ export default function FormBuilder({ initialForm }: { initialForm: Form }) {
                                                 </div>
                                                 <div className="text-navy font-medium">Question {index + 1}</div>
                                             </div>
-                                            <button 
+                                            <button
                                                 onClick={() => removeQuestion(q.id)}
                                                 className="text-red-500 hover:text-red-700"
                                                 aria-label="Remove question"
@@ -191,40 +185,60 @@ export default function FormBuilder({ initialForm }: { initialForm: Form }) {
                                             </button>
                                         </div>
                                         <div className="p-5">
-                                                <QuestionEditor key={q.id} question={q} onChange={(updated) => updateQuestion(q.id, updated)} />
+                                            <QuestionEditor key={q.id} question={q} onChange={(updated) => updateQuestion(q.id, updated)} />
                                         </div>
                                     </div>
                                 ))}
                             </div>
                         ) : (
-                            <div className="text-center p-8 bg-white rounded-lg border border-dashed border-pale-blue">
+                            (showAddQuestion && 
+                                
+                                (<div className="text-center p-8 bg-white rounded-lg border border-dashed border-pale-blue">
                                 <p className="text-gray-500 mb-4">Your form has no questions yet</p>
-                                <button 
-                                    onClick={addQuestion}
-                                    className="text-ocean-blue hover:text-deep-blue font-medium"
-                                >
-                                    Add your first question
-                                </button>
-                            </div>
+                                <div className="flex justify-center mt-6">
+                                    <button
+                                            onClick={() => {
+                                                setShowAIGenerator(true)
+                                                setShowAddQuestion(false)
+                                            }}
+                                        className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-all shadow-sm"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                        </svg>
+                                        Generate with AI
+                                    </button>
+                                    <p className="mx-4 p-2"> OR </p>
+                                    <button
+                                        onClick={addQuestion}
+                                        className="flex items-center gap-2 bg-sky-blue hover:bg-light-blue text-navy px-4 py-2 rounded-lg font-medium transition-colors"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+                                        </svg>
+                                        Add Question
+                                    </button>
+                                </div>
+                            </div>))
                         )}
-                        
-                        <div className="flex justify-center mt-6">
-                            <button 
-                                onClick={addQuestion} 
-                                className="flex items-center gap-2 bg-sky-blue hover:bg-light-blue text-navy px-4 py-2 rounded-lg font-medium transition-colors"
+                        {(form.questions.length > 0) && (
+                            <div className="flex justify-center mt-6">
+                                <button
+                                    onClick={addQuestion}
+                                    className="flex items-center gap-2 bg-sky-blue hover:bg-light-blue text-navy px-4 py-2 rounded-lg font-medium transition-colors"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                     <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
                                 </svg>
                                 Add Question
                             </button>
-                        </div>
+                        </div>)}
                     </div>
                 </div>
-                
+
                 <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <button 
-                        onClick={() => router.push('/')} 
+                    <button
+                        onClick={() => router.push('/')}
                         className="btn-secondary flex items-center justify-center gap-2"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -233,8 +247,8 @@ export default function FormBuilder({ initialForm }: { initialForm: Form }) {
                         Back to Home
                     </button>
 
-                    <button 
-                        onClick={saveForm} 
+                    <button
+                        onClick={saveForm}
                         disabled={saving}
                         className={`btn-primary flex items-center justify-center gap-2 ${saving ? 'opacity-70 cursor-not-allowed' : ''}`}
                     >
@@ -255,9 +269,9 @@ export default function FormBuilder({ initialForm }: { initialForm: Form }) {
                             </>
                         )}
                     </button>
-                    
-                    <Link 
-                        href={`/form/${form._id}`} 
+
+                    <Link
+                        href={`/form/${form._id}/preview`}
                         className="btn-secondary flex items-center justify-center gap-2"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
